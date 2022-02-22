@@ -9,9 +9,9 @@ export interface Player {
     townHallWeaponLevel: number;
     versusBattleWins: number;
     legendStatistics: LegendStatistics;
-    troops: Hero[];
-    heroes: Hero[];
-    spells: Hero[];
+    troops: Element[];
+    heroes: Element[];
+    spells: Element[];
     labels: League[];
     tag: string;
     name: string;
@@ -39,6 +39,9 @@ export interface Achievement {
 }
 
 export interface BadgeUrls {
+    tiny: string,
+    small: string,
+    medium: string
 }
 
 export interface Clan {
@@ -48,12 +51,12 @@ export interface Clan {
     badgeUrls: BadgeUrls;
 }
 
-export interface Hero {
+export interface Element {
     level: number;
-    name: BadgeUrls;
+    name: string;
     maxLevel: number;
-    village: string;
-    superTroopIsActive: boolean;
+    village?: string;
+    superTroopIsActive?: boolean;
 }
 
 export interface League {

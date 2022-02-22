@@ -1,8 +1,6 @@
-declare type user = {
+export interface User {
     id: Number,
     discord_id: String,
     tag: String,
     is_verify: Boolean
 }
-
-export default user;

@@ -1,5 +1,5 @@
-import user from './types/user';
-import verification from './types/verification';
+import {User} from './types/user';
+import {Verification} from './types/verification';
 
 const mysql = require('mysql');
 
@@ -63,7 +63,7 @@ export default class BD {
    *
    * @return {Promise} The created user
    */
-  public getUser(discordId: String): Promise<user> {
+  public getUser(discordId: String): Promise<User> {
     return new Promise((resolve, reject) => {
       this.connexion.query(
           'SELECT * FROM user WHERE discord_id = ?',
@@ -85,7 +85,7 @@ export default class BD {
      *
      * @return {Promise} The created user
      */
-  public checkVerification(userID: Number): Promise<verification> {
+  public checkVerification(userID: Number): Promise<Verification> {
     return new Promise((resolve, reject) => {
       this.connexion.query(
           'SELECT * FROM verification WHERE user_id = ? ',
@@ -108,7 +108,7 @@ export default class BD {
      *
      * @return {Promise} The created user
      */
-  public addUserTag(userID: Number, tag: String): Promise<verification> {
+  public addUserTag(userID: Number, tag: String): Promise<Verification> {
     return new Promise((resolve, reject) => {
       this.connexion.query(
           'UPDATE user SET tag = ? WHERE id = ? ',
@@ -130,7 +130,7 @@ export default class BD {
      *
      * @return {Promise} The created user
      */
-  public verifyUser(userID: Number): Promise<verification> {
+  public verifyUser(userID: Number): Promise<Verification> {
     return new Promise((resolve, reject) => {
       this.connexion.query(
           'UPDATE user SET is_verify = TRUE WHERE id = ? ',
