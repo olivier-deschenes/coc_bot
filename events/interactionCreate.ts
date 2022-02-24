@@ -61,9 +61,9 @@ const embedStats = (player: Player): MessageEmbed => {
   return new MessageEmbed()
       .addFields(
           [
-            {name: 'TH', value: player.townHallLevel+'', inline: true},
-            {name: 'LVL', value: player.expLevel+'', inline: true},
-            {name: ':trophy:', value: player.trophies+'', inline: true},
+            {name: 'TH', value: player.townHallLevel + '', inline: true},
+            {name: 'LVL', value: player.expLevel + '', inline: true},
+            {name: ':trophy:', value: player.trophies + '', inline: true},
           ]
       );
 };

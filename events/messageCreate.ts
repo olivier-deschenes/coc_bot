@@ -10,7 +10,7 @@ module.exports = {
   name: 'messageCreate',
   once: false,
   async execute(message: Message) {
-    const userID : String = message.author.id;
+    const userID: String = message.author.id;
     let user: User;
 
     if (await handlePossibleDM(message)) return;
@@ -34,7 +34,7 @@ module.exports = {
     const isVerify = user.tag != null;
 
     if (!isVerify) {
-      await message.reply( common.message.error.notRegistered());
+      await message.reply(common.message.error.notRegistered());
       return;
     }
 
