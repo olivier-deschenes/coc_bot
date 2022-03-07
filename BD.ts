@@ -1,5 +1,6 @@
 import {User} from './types/user';
 import {Verification} from './types/verification';
+import {Connection, MysqlError, OkPacket} from 'mysql';
 
 const mysql = require('mysql');
 
@@ -8,14 +9,14 @@ const mysql = require('mysql');
  */
 export default class BD {
   private static instance: BD;
-  private connexion;
+  private connection: Connection;
 
   /**
    *
    * @private
    */
   private constructor() {
-    this.connexion = mysql.createConnection({
+    this.connection = mysql.createConnection({
       port: process.env.DB_PORT,
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
@@ -43,10 +44,10 @@ export default class BD {
    */
   public createUser(discordId: String) {
     return new Promise((resolve, reject) => {
-      this.connexion.query(
+      this.connection.query(
           'INSERT INTO `user` SET ?',
           {discord_id: discordId},
-          (error, results) => {
+          (error: MysqlError, results: OkPacket) => {
             if (error) {
               reject(error);
             } else {
@@ -65,10 +66,10 @@ export default class BD {
    */
   public getUser(discordId: String): Promise<User> {
     return new Promise((resolve, reject) => {
-      this.connexion.query(
+      this.connection.query(
           'SELECT * FROM user WHERE discord_id = ?',
           [discordId],
-          (error, results) => {
+          (error: MysqlError, results: User) => {
             if (error) {
               reject(error);
             } else {
@@ -87,10 +88,10 @@ export default class BD {
      */
   public checkVerification(userID: Number): Promise<Verification> {
     return new Promise((resolve, reject) => {
-      this.connexion.query(
+      this.connection.query(
           'SELECT * FROM verification WHERE user_id = ? ',
           [userID],
-          (error, results) => {
+          (error: MysqlError, results: Verification) => {
             if (error) {
               reject(error);
             } else {
@@ -110,10 +111,10 @@ export default class BD {
      */
   public addUserTag(userID: Number, tag: String): Promise<Verification> {
     return new Promise((resolve, reject) => {
-      this.connexion.query(
+      this.connection.query(
           'UPDATE user SET tag = ? WHERE id = ? ',
           [tag, userID],
-          (error, results) => {
+          (error: MysqlError, results: OkPacket) => {
             if (error) {
               reject(error);
             } else {
@@ -132,10 +133,10 @@ export default class BD {
      */
   public verifyUser(userID: Number): Promise<Verification> {
     return new Promise((resolve, reject) => {
-      this.connexion.query(
+      this.connection.query(
           'UPDATE user SET is_verify = TRUE WHERE id = ? ',
           [userID],
-          (error, results) => {
+          (error: MysqlError, results: OkPacket) => {
             if (error) {
               reject(error);
             } else {
@@ -154,10 +155,10 @@ export default class BD {
    */
   public createVerification(userId: Number) {
     return new Promise((resolve, reject) => {
-      this.connexion.query(
+      this.connection.query(
           'INSERT INTO verification (`user_id`) VALUES (?)',
           [userId],
-          (error, results) => {
+          (error: MysqlError, results: OkPacket) => {
             if (error) {
               reject(error);
             } else {
@@ -176,10 +177,10 @@ export default class BD {
      */
   public deleteVerification(userId: Number) {
     return new Promise((resolve, reject) => {
-      this.connexion.query(
+      this.connection.query(
           'DELETE FROM verification WHERE user_id = ?',
           [userId],
-          (error, results) => {
+          (error: MysqlError, results: OkPacket) => {
             if (error) {
               reject(error);
             } else {

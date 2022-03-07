@@ -2,7 +2,8 @@
 import {ButtonInteraction, MessageEmbed} from 'discord.js';
 import {Element, Player} from '../types/coc';
 import {getPlayerInfo} from '../API';
-import {Elixir} from '../data/troops';
+import {DarkElixir as DarkElixirSpells, Elixir as ElixirSpells} from '../data/spells';
+import {DarkElixir as DarkElixirTroops, Elixir as ElixirTroops} from '../data/troops';
 
 module.exports = {
   name: 'interactionCreate',
@@ -26,7 +27,7 @@ module.exports = {
       return;
     }
 
-    let embed;
+    let embed: MessageEmbed[];
 
     switch (args[0]) {
       case 'stats':
@@ -45,47 +46,97 @@ module.exports = {
         break;
     }
 
-    await interaction.update({embeds: [embedWrapper(embed, player)]});
+    await interaction.update({embeds: embed});
 
     return;
   },
 };
 
-const embedWrapper = (embed: MessageEmbed, player: Player): MessageEmbed => {
-  return embed
-      .setAuthor({name: player.name + player.tag, iconURL: player.league.iconUrls.tiny});
+const embedStats = (player: Player): MessageEmbed[] => {
+  return [
+    new MessageEmbed()
+        .addFields(
+            [
+              {name: 'TH', value: player.townHallLevel + '', inline: true},
+              {name: 'LVL', value: player.expLevel + '', inline: true},
+              {name: ':trophy:', value: player.trophies + '', inline: true},
+            ]
+        ),
+    new MessageEmbed()
+        .setDescription(':european_castle: The player\'s clan stats')
+        .addFields(
+            [
+              {name: 'Clan', value: player.clan.name + player.clan.tag + '', inline: true},
+              {name: '\u200b', value: 'lvl ' + player.clan.clanLevel + '', inline: true},
+              {name: '\u200b', value: 'f', inline: true},
+            ]
+        ),
+  ];
 };
 
+const embedTroops = (player: Player): MessageEmbed[] => {
+  return [
+    new MessageEmbed()
+        .setColor('PURPLE')
+        .setDescription(':person_fencing: Stats on the Elixir Troops')
+        .addFields(
+            player.troops.filter((t) => t.village === 'home' && ElixirTroops.findIndex((e) => e === t.name) !== -1)
+                .map((t) => ({
+                  name: t.name,
+                  value: formatElement(t),
+                  inline: true,
+                }))
+        ),
+    new MessageEmbed()
+        .setColor('NOT_QUITE_BLACK')
+        .setDescription(':person_fencing: Dark Elixir Troops')
+        .addFields(
+            player.troops.filter((t) => t.village === 'home' && DarkElixirTroops.findIndex((e) => e === t.name) !== -1)
+                .map((t) => ({
+                  name: t.name,
+                  value: formatElement(t),
+                  inline: true,
+                }))
 
-const embedStats = (player: Player): MessageEmbed => {
-  return new MessageEmbed()
-      .addFields(
-          [
-            {name: 'TH', value: player.townHallLevel + '', inline: true},
-            {name: 'LVL', value: player.expLevel + '', inline: true},
-            {name: ':trophy:', value: player.trophies + '', inline: true},
-          ]
-      );
+        ),
+  ];
 };
 
-const embedTroops = (player: Player): MessageEmbed => {
-  return new MessageEmbed()
-      .addFields(
-          player.troops.filter((t) => t.village === 'home' && Elixir.findIndex((e) => e === t.name) !== -1)
-              .map((t) => ({
-                name: t.name,
-                value: formatElement(t),
-                inline: true,
-              }))
-      );
+const embedSpells = (player: Player): MessageEmbed[] => {
+  return [
+    new MessageEmbed()
+        .setColor('PURPLE')
+        .setDescription(':test_tube: Stats on the Elixir Spells')
+        .addFields(
+            player.spells.filter((t) => ElixirSpells.findIndex((e) => e === t.name) !== -1)
+                .map((t) => ({
+                  name: t.name,
+                  value: formatElement(t),
+                  inline: true,
+                }))
+        ),
+    new MessageEmbed()
+        .setColor('NOT_QUITE_BLACK')
+        .setDescription(':test_tube: Stats on the Elixir Spells')
+        .addFields(
+            player.spells.filter((t) => DarkElixirSpells.findIndex((e) => e === t.name) !== -1)
+                .map((t) => ({
+                  name: t.name,
+                  value: formatElement(t),
+                  inline: true,
+                }))
+
+        ),
+  ];
 };
 
-const embedSpells = (player: Player): MessageEmbed => {
-  return new MessageEmbed();
-};
-
-const embedHeros = (player: Player): MessageEmbed => {
-  return new MessageEmbed();
+const embedHeros = (player: Player): MessageEmbed[] => {
+  return [
+    new MessageEmbed()
+        .setDescription(':man_mage: Stats on the Heros')
+        .setColor('DARK_AQUA')
+        .addFields(player.heroes.map((h) => ({name: h.name, value: formatElement(h), inline: true}))),
+  ];
 };
 
 const formatElement = (e: Element): string => {
